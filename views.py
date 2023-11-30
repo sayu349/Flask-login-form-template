@@ -71,6 +71,7 @@ def register():
 
 # 一覧
 @app.route("/home")
+# "login_required"を付けることで、不正なアクセスを防止する
 @login_required
 def index():
     return render_template("index.html")

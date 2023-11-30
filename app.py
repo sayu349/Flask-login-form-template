@@ -24,6 +24,7 @@ login_manager.login_message = "認証していません：ログインしてく�
 # リダイレクトされる関数名を設定する
 login_manager.login_view = "login"
 
+# 入力されたuser_idを元に、データベースから探し出す
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
