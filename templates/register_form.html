@@ -1,6 +1,10 @@
-{% extends "base.html" %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>新規登録画面</title>
+</head>
+<body>
     <h1>サインアップ</h1>
     {% from "_formhelpers.html" import render_field %}
     <form method="POST" action="{{ url_for('register') }}" novalidate>
@@ -14,5 +18,5 @@
     <p>すでにアカウントをお持ちの場合は、
         <a href="{{ url_for('login') }}">こちら</a>
         からログインしてください。
-    </p>
-{% endblock %}
+</body>
+</html>

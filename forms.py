@@ -1,50 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length, ValidationError
-from models import Memo, User
+from models import User
 
-# ==================================================
-# Formクラス
-# ==================================================
-# メモ用入力クラス
-class MemoForm(FlaskForm):
-    # タイトル
-    title = StringField('タイトル：', validators=[DataRequired('タイトルは必須入力です'), 
-                            Length(max=10, message='10文字以下で入力してください')])
-    # 内容
-    content = TextAreaField('内容：')
-    # ボタン
-    submit = SubmitField('送信')
-
-    # カスタムバリデータ
-    def validate_title(self, title):
-        # StringFieldオブジェクトではなく、その中のデータ（文字列）をクエリに渡す必要があるため
-        # 以下のようにtitle.dataを使用して、StringFieldから実際の文字列データを取得する
-        memo = Memo.query.filter_by(title=title.data).first()
-        if memo:
-            raise ValidationError(f"タイトル '{title.data}' は既に存在します。\
-                                  別のタイトルを入力してください。")
-
-# メモ用入力クラス
-class MemoForm(FlaskForm):
-    # タイトル
-    title = StringField('タイトル：', validators=[DataRequired('タイトルは必須入力です'),
-                            Length(max=10, message='10文字以下で入力してください')])
-    # 内容
-    content = TextAreaField('内容：')
-    # ボタン
-    submit = SubmitField('送信')
-
-    # カスタムバリデータ
-    def validate_title(self, title):
-        # StringFieldオブジェクトではなく、その中のデータ（文字列）をクエリに渡す必要があるため
-        # 以下のようにtitle.dataを使用して、StringFieldから実際の文字列データを取得する
-        memo = Memo.query.filter_by(title=title.data).first()
-        if memo:
-            raise ValidationError(f"タイトル '{title.data}' は既に存在します。\
-                                  別のタイトルを入力してください。")
-
-# ▼▼▼ リスト 11-2の追加 ▼▼▼
 # ログイン用入力クラス
 class LoginForm(FlaskForm):
     username = StringField('ユーザー名：',
@@ -59,6 +17,12 @@ class LoginForm(FlaskForm):
     # カスタムバリデータ
     # 英数字と記号が含まれているかチェックする
     def validate_password(self, password):
+        """
+        ※: any()はTrue or Falseを返す
+        条件1 :英字が少なくとも1文字含まれているか
+        条件2: 数字が少なくとも1文字含まれているか
+        条件3: 特定の記号が少なくとも1文字含まれているか
+        """
         if not (any(c.isalpha() for c in password.data) and \
             any(c.isdigit() for c in password.data) and \
             any(c in '!@#$%^&*()' for c in password.data)):
@@ -71,7 +35,8 @@ class SignUpForm(LoginForm):
 
     # カスタムバリデータ
     def validate_username(self, username):
+        # ユーザー名が既に使用されていないか
         user = User.query.filter_by(username=username.data).first()
+        # userがNoneでない場合に実行される
         if user:
             raise ValidationError('そのユーザー名は既に使用されています')
-# ▲▲▲ リスト 11-2の追加 ▲▲▲
